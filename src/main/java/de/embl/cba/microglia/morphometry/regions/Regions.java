@@ -105,6 +105,8 @@ public abstract class Regions
 			double sizeInCalibratedUnits,
 			double calibration )
 	{
+		IJ.log( "Removing objects with an area less than " + sizeInCalibratedUnits + "..." );
+
 		final ImgLabeling< Integer, IntType > imgLabeling =
 				asImgLabeling( mask, ConnectedComponents.StructuringElement.FOUR_CONNECTED );
 
@@ -123,8 +125,8 @@ public abstract class Regions
 			}
 		}
 
-		IJ.log( "Removed " + numRemoved + " small regions of " + numRegions + " total regions; " +
-				"leaving " + ( numRegions - numRemoved) + " regions.");
+		IJ.log( "Removed " + numRemoved + "/" + numRegions + " objects; " +
+				"leaving " + ( numRegions - numRemoved) + " objects.");
 	}
 
 	public static < T extends RealType< T > & NativeType< T > >

@@ -325,7 +325,7 @@ public abstract class Utils
 		labelsImp.setCalibration( calibration );
 		IJ.run(labelsImp, "Enhance Contrast", "saturated=0.35");
 		new FileSaver( labelsImp ).saveAsTiff( path );
-		IJ.log( "Label images saved: " + path );
+		IJ.log( "Segmentation label image saved: " + path );
 	}
 
 	public static < T extends RealType< T > & NativeType< T > >

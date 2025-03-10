@@ -28,7 +28,7 @@ public class MicrogliaSettings<T extends RealType<T> & NativeType< T > >
 	public Double minimalTrackingSplittingObjectArea;
 	public Double skeletonMaxLength;
 	public double minimalObjectCenterDistance;
-	public double maximalWatershedLength;
+	public double maximalWatershedLength = 20.0;
 	public final double minimalOverlapFraction = 0.05;
 	public final double minimalSumIntensityRatio = 0.5;
 	public final double maximalSumIntensityRatio = 1.5;
@@ -53,8 +53,6 @@ public class MicrogliaSettings<T extends RealType<T> & NativeType< T > >
 		settings.workingVoxelSize = settings.calibration2D[ 0 ];
 		settings.minimalTrackingSplittingObjectArea = 20.0; // um2, this can be very small
 		settings.minimalObjectCenterDistance = 6;
-		// TODO: This should be something relative, or configurable
-		settings.maximalWatershedLength = 20; // um // used to be 10, but 20 works better in example data
 
 		return settings;
 	}

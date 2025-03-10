@@ -304,7 +304,7 @@ public class Algorithms
 
 
 	public static < T extends RealType< T > & NativeType< T > >
-	void splitCurrentObjectsBasedOnOverlapWithPreviousObjects(
+	int splitCurrentObjectsBasedOnOverlapWithPreviousObjects(
 			RandomAccessibleInterval< BitType > outputMask,
 			HashMap< Integer, ArrayList< Integer > > overlappingObjectsLabelsMap,
 			ImgLabeling< Integer, IntType > currentImgLabeling,
@@ -315,6 +315,8 @@ public class Algorithms
 			OpService opService,
 			boolean showSplits )
 	{
+		IJ.log( "Splitting objects based on overlap with previous frame..." );
+		int numSplits = 0;
 
 		final LabelRegions currentRegions = new LabelRegions( currentImgLabeling );
 
@@ -381,7 +383,6 @@ public class Algorithms
 						true,
 						currentObjectMask );
 
-
 				LabelRegions< Integer > splitObjects = new LabelRegions( watershedImgLabeling );
 
 				if ( splitObjects.getExistingLabels().contains( -1 ) )
@@ -389,7 +390,7 @@ public class Algorithms
 					// a watershed was found
 					drawWatershedIntoMask( outputMask, currentRegions, currentObjectLabel, splitObjects );
 					// sometimes the watershed is weirdly placed such that very small (single pixel) objects can occur
-					Regions.removeSmallRegionsInMask( outputMask, minimalObjectSize, 1 );
+					numSplits++;
 					if ( showSplits )
 					{
 						ImageJFunctions.show( watershedImgLabeling.getSource(), "" + currentObjectLabel );
@@ -406,6 +407,9 @@ public class Algorithms
 			}
 		}
 
+		IJ.log( "" + numSplits + " objects have been split." );
+
+		return numSplits;
 	}
 
 	public static ImgLabeling< Integer, IntType > createImgLabelingFromLabeling( ArrayList< Integer > overlappingPreviousObjectLabels, RandomAccessibleInterval< IntType > seeds )
@@ -431,7 +435,7 @@ public class Algorithms
 	}
 
 	public static < T extends RealType< T > & NativeType< T > >
-	void splitTouchingObjects(
+	int splitTouchingObjects(
 			ImgLabeling< Integer, IntType > imgLabeling,
 			RandomAccessibleInterval< T > intensity,
 			RandomAccessibleInterval< BitType > mask, // This will be changed, i.e. the split(s) will be drawn into it
@@ -443,6 +447,9 @@ public class Algorithms
 			boolean forceSplit,
 			boolean showSplittingAttempts )
 	{
+		IJ.log("Splitting objects based on their size...");
+
+		int numberOfSplits = 0;
 
 		final LabelRegions labelRegions = new LabelRegions( imgLabeling );
 
@@ -450,6 +457,7 @@ public class Algorithms
 		{
 			if ( numObjectsPerRegion.get( label ) > 1 )
 			{
+				IJ.log( "Attempting to split object #" + label + " into " + numObjectsPerRegion.get( label ) + " objects..." );
 				final RandomAccessibleInterval< T > maskedAndCroppedIntensities = Views.zeroMin( Regions.getMaskedAndCropped( intensity, labelRegions.getLabelRegion( label ) ) );
 				final RandomAccessibleInterval< BitType > labelRegionMask = Views.zeroMin( Regions.asMask( labelRegions.getLabelRegion( label ) ) );
 
@@ -497,14 +505,13 @@ public class Algorithms
 				}
 				else
 				{
-					// TODO: add integrated intensity along watershed as criterium
+					// TODO: add integrated intensity along watershed as criteriom
 					isValidSplit = checkSplittingValidity(
 							splitObjects,
 							minimalObjectSize,
 							maximalWatershedBoundaryLength );
 				}
 
-				//Utils.log( "Valid split found: " + isValidSplit );
 
 				if ( showSplittingAttempts )
 				{
@@ -513,12 +520,17 @@ public class Algorithms
 
 				if ( isValidSplit )
 				{
+					numberOfSplits++;
 					drawWatershedIntoMask( mask, labelRegions, label, splitObjects );
 				}
 
-				IJ.log( "Splitting object #" + label + ": " + isValidSplit);
+				IJ.log( "...splitting succeed: " + isValidSplit );
 			}
 		}
+
+		IJ.log( "" + numberOfSplits + " objects have been split." );
+
+		return numberOfSplits;
 
 	}
 
@@ -659,7 +671,12 @@ public class Algorithms
 			Collections.reverse( regionSizes );
 
             // 2nd largest object too small
-            return regionSizes.get( 1 ) >= minimumObjectSize;
+			boolean splitRegionLargeEnough = regionSizes.get( 1 ) >= minimumObjectSize;
+
+			if ( ! splitRegionLargeEnough )
+				IJ.log("Split object(s) too small for a split.");
+
+			return splitRegionLargeEnough;
 		}
 
 		return true;
@@ -689,6 +706,7 @@ public class Algorithms
 
 				if ( maximalLength > maximalWatershedLength )
 				{
+					IJ.log( "Contact too long for a split, by a factor of " + ( 1.0 * maximalLength / maximalWatershedLength ) );
 					return false;
 				}
 			}

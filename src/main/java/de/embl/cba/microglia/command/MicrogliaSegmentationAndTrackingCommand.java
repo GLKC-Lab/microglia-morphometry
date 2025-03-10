@@ -40,10 +40,16 @@ public class MicrogliaSegmentationAndTrackingCommand< T extends RealType<T> & Na
 	@Parameter( label = "Minimal cell size [um^2]" )
 	public double minimalMicrogliaSize = 200;
 
-	@Parameter( label = "Maximal cell skeleton length [um]" )
+	@Parameter( label = "Maximal cell skeleton length [um]",
+			description = "Larger (smaller) value: Less (more) automated cell splitting." )
 	public double skeletonMaxLength = 450;
 
-	@Parameter( label = "Run headless" )
+	@Parameter( label = "Maximal cell contact length [um]",
+			description = "Larger (smaller) value: Less (more) automated cell splitting." )
+	public double contactMaxLength = 20;
+
+	@Parameter( label = "Run headless",
+			description = "Headless mode is fully automated without windows showing." )
 	public boolean headless = false;
 
 	public final boolean showIntermediateResults = settings.showIntermediateResults;
@@ -70,6 +76,7 @@ public class MicrogliaSegmentationAndTrackingCommand< T extends RealType<T> & Na
 		settings.minimalObjectSize = minimalMicrogliaSize;
 		settings.skeletonMaxLength = skeletonMaxLength;
 		settings.manualSegmentationCorrection = ! headless;
+		settings.maximalWatershedLength = contactMaxLength;
 	}
 
 	protected void processFile( File intensityFile, File segmentationFile )

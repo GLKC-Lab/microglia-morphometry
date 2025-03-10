@@ -1,7 +1,9 @@
 package de.embl.cba.microglia.segment;
 
 import de.embl.cba.microglia.Utils;
+import de.embl.cba.microglia.measure.Measurements;
 import de.embl.cba.microglia.morphometry.Algorithms;
+import de.embl.cba.microglia.morphometry.Constants;
 import de.embl.cba.microglia.morphometry.regions.Regions;
 import net.imglib2.RandomAccessibleInterval;
 import net.imglib2.algorithm.labeling.ConnectedComponents;
@@ -12,8 +14,7 @@ import net.imglib2.type.numeric.RealType;
 import net.imglib2.type.numeric.integer.IntType;
 
 import java.util.HashMap;
-
-import static de.embl.cba.microglia.segment.SplittingUtils.getNumObjectsFromSkeleton;
+import java.util.Map;
 
 
 public class MicrogliaShapeAndIntensitySplitter< T extends RealType< T > & NativeType< T > >
@@ -30,6 +31,25 @@ public class MicrogliaShapeAndIntensitySplitter< T extends RealType< T > & Nativ
 		this.mask = mask;
 		this.intensity = intensity;
 		this.settings = settings;
+	}
+
+	public static HashMap< Integer, Integer > getNumObjectsFromSkeleton(
+			ImgLabeling< Integer, IntType > imgLabeling,
+			RandomAccessibleInterval< BitType > skeleton,
+			MicrogliaSettings settings )
+	{
+		HashMap< Integer, Map< String, Object > > skeletonMeasurements = new HashMap<>();
+		Measurements.measureSumIntensities( skeletonMeasurements, imgLabeling, skeleton, Constants.SKELETON );
+		HashMap< Integer, Integer > numObjects = new HashMap<>();
+		for ( int label : skeletonMeasurements.keySet() )
+		{
+			final double skeletonLength = settings.workingVoxelSize *
+					(long) skeletonMeasurements.get( label ).get( Measurements.SUM_INTENSITY + "_" + Constants.SKELETON );
+			// System.out.println( "" + label + ": " + skeletonLength );
+			int n = (int) ( Math.ceil( skeletonLength / settings.skeletonMaxLength ) );
+			numObjects.put( label, n );
+		}
+		return numObjects;
 	}
 
 	public void run()
@@ -53,7 +73,7 @@ public class MicrogliaShapeAndIntensitySplitter< T extends RealType< T > & Nativ
 
 		splitMask = Utils.copyAsArrayImg( mask );
 
-		Algorithms.splitTouchingObjects(
+		int numSplits = Algorithms.splitTouchingObjects(
 				imgLabeling,
 				intensity,
 				splitMask, // <= will hold the result
@@ -64,7 +84,8 @@ public class MicrogliaShapeAndIntensitySplitter< T extends RealType< T > & Nativ
 				settings.opService, false, false );
 
 		// The splitting may have caused too small objects to appear
-		Regions.removeSmallRegionsInMask( splitMask, settings.minimalObjectSize, settings.workingVoxelSize );
+		if ( numSplits > 0 )
+			Regions.removeSmallRegionsInMask( splitMask, settings.minimalObjectSize, settings.workingVoxelSize );
 	}
 
 	public RandomAccessibleInterval< BitType > getSplitMask()

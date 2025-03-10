@@ -97,7 +97,7 @@ public class SemiAutomatedTrackingSplitter< T extends RealType< T > & NativeType
 
 	private void createAndAddNewLabeling( int t )
 	{
-		IJ.log( "Instance segmentation of frame " + t );
+		IJ.log( "Instance segmentation of time frame " + t + "...");
 
 		if ( t == 0 )
 		{
@@ -157,8 +157,8 @@ public class SemiAutomatedTrackingSplitter< T extends RealType< T > & NativeType
 		RandomAccessibleInterval< BitType > splitMask =
 				Utils.copyAsArrayImg( masks.get( currentTimePoint ) );
 
-		Algorithms.splitCurrentObjectsBasedOnOverlapWithPreviousObjects(
-				splitMask,
+		int numSplits = Algorithms.splitCurrentObjectsBasedOnOverlapWithPreviousObjects(
+				splitMask, // <= will be modified
 				overlappingObjectsLabelsMap,
 				currentImgLabeling,
 				intensities.get( currentTimePoint ),
@@ -166,7 +166,10 @@ public class SemiAutomatedTrackingSplitter< T extends RealType< T > & NativeType
 				minimalObjectSizeInPixels,
 				( int ) ( settings.minimalObjectCenterDistance / settings.workingVoxelSize ),
 				settings.opService,
-				false);
+				false );
+
+		if ( numSplits > 0 )
+			Regions.removeSmallRegionsInMask( splitMask, settings.minimalObjectSize, settings.workingVoxelSize );
 
 		return splitMask;
 	}

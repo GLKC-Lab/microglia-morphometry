@@ -94,7 +94,6 @@ public class MicrogliaBinarizer< T extends RealType< T > & NativeType< T > >
 		/**
 		 * Remove small objects from mask
 		 */
-		IJ.log( "Removing objects of an area less than " + settings.minimalObjectSize + " um^2..." );
 		Regions.removeSmallRegionsInMask( mask, settings.minimalObjectSize, settings.workingVoxelSize );
 
 		if ( showIntermediateResults )

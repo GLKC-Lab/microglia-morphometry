@@ -97,8 +97,13 @@ There are few parameters that can be set to adapt the algorithm to different cel
   - This is used in the automated [Semantic Segmentation](https://github.com/embl-cba/microglia-morphometry#automated-semantic-segmentation)
 - `Maximal cell skeleton length [um]` = 450 micrometer
   - This is used in the automated [Object Splitting](https://github.com/embl-cba/microglia-morphometry#automated-object-splitting) 
-Note: 
-- As the parameters are in micrometer units it is critical that the input images have the correct calibration (pixel size)!
+- `Maximal cell skeleton length [um]` = 450 micrometer
+  - This is used in the automated [Object Splitting](https://github.com/embl-cba/microglia-morphometry#automated-object-splitting)
+- `Maximal cell contact length [um]` = 20 micrometer
+  - This is used in the automated [Object Splitting](https://github.com/embl-cba/microglia-morphometry#automated-object-splitting)
+
+**Important**: 
+- As the parameters are in **micrometer units** it is critical that the input images have the correct calibration (pixel size)!
 
 ### Automated semantic segmentation
 
@@ -187,7 +192,7 @@ The CSV file contains columns for the following features:
 - Custom features:   
     - Centroid_X_Pixel, Centroid_Y_Pixel, Centroid_Z_Pixel: The coordinates of the cell's centroid.
     - Centroid_Time_Frames: The cell's time point in the TIFF stack.
-    - BrightestPoint_X_Pixel, BrightestPoint_Y_Pixel: The coordinates of the brigthest point within the cell, as determined after blurring the image with a Gaussian filter with a sigma of 3 pixels. This is useful to determine the likely position of the cell's soma.
+    - BrightestPoint_X_Pixel, BrightestPoint_Y_Pixel: The coordinates of the brightest point within the cell, as determined after blurring the image with a Gaussian filter with a sigma of 3 pixels. This is useful to determine the likely position of the cell's soma.
     - BrightestPointToCentroidDistance_Pixel: The distance of the cell's brightest point to its centroid.
     - RadiusAtBrightestPoint_Pixel: The distance from the cell's brightest point to the closest point outside the cell. The motivation to add this feature was to get a measurement that could represent the size of the cell's soma.
     - ImageBoundaryContact_Pixel: The number of pixels of the cell that are at the image boundary. This is useful to reject cells from the statistical analysis that are not fully in the image and therefore have compormised shape and intensity measurements.
@@ -214,6 +219,22 @@ For example:
 - Branchness = SkeletonNumBranchPoints / GeodesicDiameter_Pixel
 - Straightness = SkeletonLongestBranchLength_Pixel^2 / Area_Pixel2
 - Thickness = Area_Pixel2 / SkeletonTotalLength_Pixel^2
+
+Note that `^2` means that you should square the parameter. 
+Parameters ending on `2` shall not be squared, the `2` just indicates area units.
+
+#### Discussion of suggested derived features
+
+For some of the above suggested parameters it can be useful to multiply them with constant factors to make them more meaningful.
+
+For example:
+
+- Somaness = 2 * Pi * RadiusAtBrightestPoint_Pixel^2 / Area_Pixel2
+  - With this calibration the value should be between 0 and 1, where a value close to 1 means that the cell mainly consists of Soma, while a value close to 0 means that the cell mainly consists of branches. 
+- AspectRatio = 2 * Pi * LargestInscribedCircleRadius_Pixel^2 / Area_Pixel2
+  - With this calibration the value should be between 0 and 1, where a value close to 1 means that the cell is a circle, while a value close to 0 means that the cell is very elongated or branched.
+
+Note that Somaness and AspectRatio are the same if the brightest point of the cell is where the cell is the thickest.
 
 ## Data exploration and downstream analysis
 
