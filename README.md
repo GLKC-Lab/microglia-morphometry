@@ -1,5 +1,7 @@
 # Microglia Morphometry
 
+<img src="./documentation/project-icon.png" width="400">
+
 A Fiji plugin for semi-automated segmentation, tracking and morphometric analysis of microglia cells in 2D images.
 
 ## Citation
@@ -178,7 +180,7 @@ The CSV file contains columns for the following features:
 
 - MorpholibJ features ([www](https://imagej.net/plugins/morpholibj), [doi](https://doi.org/10.1093/bioinformatics/btw413)):
     - Object_Label: The cell's label index, as in the corresponding label mask image.	
-    - GeodesicDiameter_Pixel: The longest shortest path bewteen any two points in the cell.
+    - GeodesicDiameter_Pixel: The longest shortest path between any two points in the cell.
     - LargestInscribedCircleRadius_Pixel: The radius of the largest disk that can be enclosed within the corresponding cell.
     - Perimeter_Pixel: The length of the cell's perimeter.
     - Area_Pixel2: The cell's area.	
@@ -198,7 +200,7 @@ The CSV file contains columns for the following features:
     - ImageBoundaryContact_Pixel: The number of pixels of the cell that are at the image boundary. This is useful to reject cells from the statistical analysis that are not fully in the image and therefore have compormised shape and intensity measurements.
 - Other columns:
     - FrameInterval, FrameInterval_Unit: Temporal calibration of the image.
-    - VoxelSpacing_Unit, VoxelSpacing_X, VoxelSpacing_Y, VoxelSpacing_Z: Spatial calibration of the image. This is useful for converting all measurments to the physical VoxelSpacing_Unit units. Given that VoxelSpacing_X and VoxelSpacing_Y are identical, one can do so by multiplying all measurements that end with _Pixel by VoxelSpacing_X, and by multiplying all measurements that end with _Pixel2 with VoxelSpacing_X * VoxelSpacing_Y.
+    - VoxelSpacing_Unit, VoxelSpacing_X, VoxelSpacing_Y, VoxelSpacing_Z: Spatial calibration of the image. This is useful for converting all measurements to the physical VoxelSpacing_Unit units. Given that VoxelSpacing_X and VoxelSpacing_Y are identical, one can do so by multiplying all measurements that end with _Pixel by VoxelSpacing_X, and by multiplying all measurements that end with _Pixel2 with VoxelSpacing_X * VoxelSpacing_Y.
     - Path_LabelMasks, Path_Intensities, Path_Skeletons, Path_Annotations: Relative paths to all associated images. This is useful for downstream analysis and visualisation. 	
 
 #### Suggested derived features
@@ -207,7 +209,8 @@ It can be useful to compute derived features, e.g. using a statistical data anal
 
 For example:
 
-- Area_Calibrated = Area_Pixel2 * VoxelSpacing_X * VoxelSpacing_Y
+- Area_Calibrated = Area_Pixel2 * VoxelSpacing_X^2
+  - Assuming that VoxelSpacing_X equals VoxelSpacing_Y
 - SkeletonAvgBranchLength_Calibrated = SkeletonAvgBranchLength_Pixel * VoxelSpacing_X
 - Solidity = Area_Pixel2 / ConvexArea_Pixel2
 - Roundness = Area_Pixel2 / EllipsoidLongestAxisRadius_Pixel^2
@@ -230,11 +233,11 @@ For some of the above suggested parameters it can be useful to multiply them wit
 For example:
 
 - Somaness = 2 * Pi * RadiusAtBrightestPoint_Pixel^2 / Area_Pixel2
-  - With this calibration the value should be between 0 and 1, where a value close to 1 means that the cell mainly consists of Soma, while a value close to 0 means that the cell mainly consists of branches. 
+  - With the `2 * Pi` calibration the value should be between 0 and 1, where a value close to 1 means that the cell mainly consists of Soma, while a value close to 0 means that the cell mainly consists of branches. 
 - AspectRatio = 2 * Pi * LargestInscribedCircleRadius_Pixel^2 / Area_Pixel2
-  - With this calibration the value should be between 0 and 1, where a value close to 1 means that the cell is a circle, while a value close to 0 means that the cell is very elongated or branched.
+  - With the `2 * Pi` calibration the value should be between 0 and 1, where a value close to 1 means that the cell is a circle, while a value close to 0 means that the cell is very elongated or branched.
 
-Note that Somaness and AspectRatio are the same if the brightest point of the cell is where the cell is the thickest.
+Note that Somaness and AspectRatio are similar and are in fact the same if the brightest point of the cell is where the cell is the thickest.
 
 ## Data exploration and downstream analysis
 
