@@ -1,3 +1,6 @@
+> **GLKC Lab local build.** pom.xml updated for compatibility with current 
+> FIJI releases. Original plugin by Martinez et al. (2023) / EMBL.  
+> Original repository: https://github.com/embl-cba/microglia-morphometry
 # Microglia Morphometry
 
 <img src="./documentation/project-icon.png" width="300">
