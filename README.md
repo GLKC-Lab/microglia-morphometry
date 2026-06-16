@@ -9,9 +9,24 @@ A Fiji plugin for semi-automated segmentation, tracking and morphometric analysi
 
 ## Citation
 
-If you are using this plugin, please cite:
+If you use this plugin in your research, please cite the following:
 
-[Martinez A, Hériché JK, Calvo M, Tischer C, Otxoa-de-Amezaga A, Pedragosa J, Bosch A, Planas AM, Petegnief V. Characterization of microglia behaviour in healthy and pathological conditions with image analysis tools. Open Biol. 2023 Jan;13(1):220200. doi: 10.1098/rsob.220200. Epub 2023 Jan 11. PMID: 36629019; PMCID: PMC9832574.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9832574/pdf/rsob.220200.pdf)
+**Original method and plugin:**
+Martinez A, Hérichè JK, Calvo M, Tischer C, Otxoa-de-Amezaga A, 
+Pedragosa J, Bosch A, Planas AM, Petegnief V. Characterization of 
+microglia behaviour in healthy and pathological conditions with image 
+analysis tools. Open Biol. 2023;13(1):220200. 
+doi: 10.1098/rsob.220200
+
+**Required dependency (MorpholibJ):**
+Legland D et al. MorpholibJ: integrated library and plugins for 
+mathematical morphology with ImageJ. Bioinformatics. 2016;32(22):3532-4. 
+doi: 10.1093/bioinformatics/btw413
+
+**This build:**
+If using this GLKC Lab local build specifically, please acknowledge:
+GL Kennedy-Clark, GLKC Lab local build for current FIJI compatibility.
+https://github.com/GLKC-Lab/microglia-morphometry
 
 ## Installation
 
