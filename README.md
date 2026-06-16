@@ -7,6 +7,32 @@
 
 A Fiji plugin for semi-automated segmentation, tracking and morphometric analysis of microglia cells in 2D images.
 
+---
+
+## Installation (GLKC Lab build)
+
+**Step 1 — Install MorpholibJ (required dependency)**
+
+1. Open FIJI
+2. Go to **Help > Update > Manage update sites**
+3. Find **IJPB-plugins**, tick the checkbox
+4. Click Close, then Apply changes, then restart FIJI
+
+**Step 2 — Install the plugin**
+
+1. Go to the [latest release](https://github.com/GLKC-Lab/microglia-morphometry/releases/latest)
+2. Download `microglia-morphometry-1_0_1-SNAPSHOT.jar` from the Assets section
+3. Copy the jar into your FIJI plugins folder:
+   - Windows: `Fiji.app\plugins\`
+   - macOS: right-click Fiji.app > Show Package Contents > `Contents/plugins/`
+   - Linux: `Fiji.app/plugins/`
+4. Restart FIJI
+5. The plugin appears under **Plugins > Microglia**
+
+📄 **[Download the full User Guide (PDF)](https://github.com/GLKC-Lab/microglia-morphometry/releases/latest)**
+
+---
+
 ## Citation
 
 If you use this plugin in your research, please cite the following:
